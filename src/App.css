@@ -1,0 +1,775 @@
+:root {
+  --shared-ui-accent: #ffa800;
+  --shared-ui-accent-foreground: #17130a;
+  color-scheme: dark;
+  background: var(--background);
+  font-size: 14px;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.revise-status {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  align-content: center;
+  gap: 10px;
+  background: var(--background);
+  color: var(--foreground);
+  text-align: center;
+}
+.revise-status > svg {
+  width: 16px;
+  height: 16px;
+}
+.revise-status > span {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border-radius: 50%;
+  background: #462729;
+  color: #ff8b8b;
+  font-size: 23px;
+}
+.revise-status.caught-up > span {
+  background: #203e2c;
+  color: #68df98;
+}
+.revise-status strong {
+  font-size: 21px;
+  letter-spacing: -0.025em;
+}
+.revise-status p {
+  max-width: 420px;
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.revise-status-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 7px;
+}
+.revise-status.caught-up > button {
+  margin-top: 8px;
+}
+
+.revise-session {
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-rows: auto 1fr auto;
+  align-items: center;
+  justify-items: center;
+  padding: 40px 50px 30px;
+  background: var(--background);
+  color: var(--foreground);
+}
+.revise-session-progress {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: #2b2b2e;
+}
+.revise-session-progress span {
+  display: block;
+  height: 100%;
+  background: #ffa800;
+  transition: width 0.2s;
+}
+.revise-session > header {
+  display: flex;
+  width: min(760px, 90vw);
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.revise-session-paused {
+  position: absolute;
+  z-index: 4;
+  inset: 50% auto auto 50%;
+  display: grid;
+  min-width: 220px;
+  transform: translate(-50%, -50%);
+  place-items: center;
+  gap: 10px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--card), transparent 4%);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+.revise-session-paused > svg {
+  width: 24px;
+  height: 24px;
+  color: #ffa800;
+}
+.revise-session-paused + .revise-study-card {
+  opacity: 0.28;
+  pointer-events: none;
+}
+.revise-study-card {
+  display: grid;
+  width: min(760px, 76vw);
+  min-height: min(500px, 60vh);
+  align-self: center;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.3);
+}
+.revise-study-question,
+.revise-study-answer {
+  display: grid;
+  min-height: 230px;
+  place-items: center;
+  padding: 48px;
+  color: #f4f4f5;
+  font-size: clamp(22px, 2.2vw, 34px);
+  font-weight: 620;
+  line-height: 1.35;
+  text-align: center;
+  white-space: pre-wrap;
+}
+.revise-study-answer {
+  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+  color: #e4e4e7;
+  font-size: clamp(17px, 1.7vw, 25px);
+  font-weight: 450;
+}
+.revise-study-source {
+  width: 100%;
+  height: auto;
+  justify-content: flex-start;
+  border-radius: 0;
+  border-top: 1px solid var(--border);
+  padding: 11px 14px;
+  color: var(--muted-foreground);
+  font-size: 10px;
+}
+.revise-study-source:hover {
+  color: var(--primary);
+}
+.revise-reveal {
+  border-radius: 999px;
+}
+.revise-ratings {
+  display: flex;
+  gap: 9px;
+}
+.revise-ratings button {
+  min-width: 108px;
+  border-radius: 999px;
+}
+.revise-ratings button[data-rating="again"]:hover {
+  color: #f87171;
+}
+.revise-ratings button[data-rating="hard"]:hover {
+  color: #fb923c;
+}
+.revise-ratings button[data-rating="good"]:hover {
+  color: #4ade80;
+}
+.revise-ratings button[data-rating="easy"]:hover {
+  color: #818cf8;
+}
+.revise-ratings kbd {
+  margin-left: auto;
+}
+.revise-session-complete {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  background: var(--background);
+  color: var(--foreground);
+}
+.revise-session-complete > span {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border-radius: 50%;
+  background: #203e2c;
+  color: #68df98;
+  font-size: 24px;
+}
+.revise-session-complete strong {
+  font-size: 22px;
+}
+.revise-session-complete p {
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.spinning {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (max-width: 760px) {
+  .revise-session {
+    padding: 32px 14px 24px;
+  }
+  .revise-study-card {
+    width: 94vw;
+  }
+  .revise-ratings {
+    display: grid;
+    width: 94vw;
+    grid-template-columns: 1fr 1fr;
+  }
+  .revise-ratings button {
+    min-width: 0;
+  }
+}
+
+.revise-workspace {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: 254px minmax(0, 1fr);
+  background: #1c1c1f;
+  color: #f5f5f5;
+}
+.revise-library-sidebar {
+  display: grid;
+  min-height: 0;
+  grid-template-rows: auto auto auto auto minmax(0, 1fr);
+  gap: 10px;
+  padding: 46px 12px 14px;
+  border-right: 1px solid #333337;
+  background: #222225;
+}
+.revise-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 8px 10px;
+}
+.revise-brand img {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 5px 16px rgba(255, 168, 0, 0.15);
+}
+.revise-brand div {
+  display: grid;
+  line-height: 1.2;
+}
+.revise-brand strong {
+  font-size: 15px;
+  letter-spacing: -0.02em;
+}
+.revise-brand span {
+  margin-top: 3px;
+  color: #929298;
+  font-size: 10px;
+}
+.revise-search {
+  display: flex;
+  height: 34px;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #38383c;
+  border-radius: 9px;
+  padding: 0 10px;
+  background: #1a1a1d;
+  color: #85858b;
+}
+.revise-search:focus-within {
+  border-color: rgba(255, 168, 0, 0.6);
+  box-shadow: 0 0 0 2px rgba(255, 168, 0, 0.1);
+}
+.revise-search svg {
+  width: 14px;
+  height: 14px;
+}
+.revise-search input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #ededee;
+  font: inherit;
+  font-size: 11px;
+}
+.revise-primary-nav {
+  display: grid;
+  gap: 3px;
+}
+.revise-primary-nav button {
+  display: flex;
+  height: 34px;
+  align-items: center;
+  gap: 9px;
+  border: 0;
+  border-radius: 7px;
+  padding: 0 9px;
+  background: transparent;
+  color: #b9b9be;
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+.revise-primary-nav button:hover,
+.revise-primary-nav button[data-active="true"] {
+  background: #313135;
+  color: #fff;
+}
+.revise-primary-nav svg {
+  width: 15px;
+  height: 15px;
+}
+.revise-primary-nav span {
+  min-width: 22px;
+  margin-left: auto;
+  border-radius: 999px;
+  padding: 2px 6px;
+  background: #3d3d42;
+  color: #d0d0d4;
+  font-size: 9px;
+  text-align: center;
+}
+.revise-library-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 7px 0;
+  color: #77777d;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.revise-deck-list {
+  min-height: 0;
+  overflow: auto;
+  padding: 0 2px 20px;
+  scrollbar-width: thin;
+}
+.revise-deck {
+  margin-bottom: 2px;
+}
+.revise-deck-row {
+  display: flex;
+  height: 32px;
+  align-items: center;
+  border-radius: 7px;
+}
+.revise-deck-row:hover {
+  background: #2c2c30;
+}
+.revise-deck-toggle {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  padding: 0 3px;
+  background: transparent;
+  color: #c5c5ca;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.revise-deck-toggle span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.revise-deck-toggle svg {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  color: #85858b;
+}
+.revise-deck-count {
+  color: #77777d;
+  font-size: 9px;
+}
+.revise-deck-row > button:last-child {
+  opacity: 0;
+}
+.revise-deck-row:hover > button:last-child {
+  opacity: 1;
+}
+.revise-card-list {
+  display: grid;
+  gap: 1px;
+  padding: 2px 0 4px 35px;
+}
+.revise-card-list > button {
+  display: flex;
+  min-width: 0;
+  height: 27px;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 6px;
+  padding: 0 7px;
+  background: transparent;
+  color: #8f8f95;
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+.revise-card-list > button:hover,
+.revise-card-list > button[data-active="true"] {
+  background: #2f2f33;
+  color: #ededee;
+}
+.revise-card-list > button span {
+  overflow: hidden;
+  flex: 1;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.revise-card-list i {
+  border-radius: 999px;
+  padding: 2px 5px;
+  background: rgba(255, 168, 0, 0.12);
+  color: #ffbd3d;
+  font-size: 8px;
+  font-style: normal;
+}
+.revise-card-list p,
+.revise-sidebar-empty {
+  margin: 7px;
+  color: #707076;
+  font-size: 9px;
+}
+.revise-workspace-content {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+.revise-inline-error {
+  position: sticky;
+  z-index: 20;
+  top: 12px;
+  display: flex;
+  width: fit-content;
+  max-width: calc(100% - 40px);
+  align-items: center;
+  gap: 8px;
+  margin: 12px auto -48px;
+  border: 1px solid rgba(255, 168, 0, 0.35);
+  border-radius: 9px;
+  padding: 8px 11px;
+  background: #332810;
+  color: #ffd27a;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  font-size: 10px;
+}
+.revise-inline-error svg {
+  width: 14px;
+  height: 14px;
+}
+.revise-inline-error button {
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.revise-dashboard {
+  min-height: 100%;
+  padding: 28px 28px 50px;
+}
+.revise-dashboard-toolbar {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #343438;
+  padding-bottom: 15px;
+}
+.revise-filter-group {
+  display: flex;
+  gap: 2px;
+}
+.revise-dashboard-toolbar select,
+.revise-date-range input {
+  height: 32px;
+  border: 1px solid #3b3b40;
+  border-radius: 7px;
+  padding: 0 8px;
+  outline: none;
+  background: #29292d;
+  color: #d6d6d9;
+  font: inherit;
+  font-size: 10px;
+}
+.revise-dashboard-toolbar select:nth-last-of-type(1) {
+  margin-left: auto;
+}
+.revise-date-range {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #77777d;
+  font-size: 9px;
+}
+.revise-activity-panel {
+  padding: 22px 0 12px;
+}
+.revise-section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.revise-section-heading h1 {
+  margin: 0;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+}
+.revise-section-heading p {
+  margin: 5px 0 0;
+  color: #85858b;
+  font-size: 10px;
+}
+.revise-section-heading svg {
+  width: 14px;
+  height: 14px;
+  color: #ffa800;
+}
+.revise-activity-grid {
+  display: grid;
+  max-width: 900px;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 11px);
+  grid-auto-columns: 11px;
+  gap: 3px;
+  margin-top: 18px;
+  overflow: hidden;
+}
+.revise-activity-grid span {
+  border: 1px solid #303034;
+  border-radius: 2px;
+  background: color-mix(in srgb, #ffa800 calc(var(--activity) * 100%), #27272b);
+}
+.revise-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(210px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.revise-metric-card {
+  display: grid;
+  min-width: 0;
+  min-height: 248px;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  border: 1px solid #333337;
+  border-radius: 10px;
+  padding: 15px 15px 10px;
+  background: #222225;
+}
+.revise-metric-card h2 {
+  margin: 0;
+  color: #bcbcc1;
+  font-size: 11px;
+  font-weight: 600;
+}
+.revise-metric-card > strong {
+  margin-top: 8px;
+  color: #f3f3f4;
+  font-size: 21px;
+  font-weight: 520;
+  letter-spacing: -0.04em;
+}
+.revise-chart {
+  width: 100%;
+  height: 165px;
+  aspect-ratio: auto;
+  align-self: end;
+}
+.revise-chart-empty,
+.revise-empty {
+  display: grid;
+  min-height: 130px;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  color: #696970;
+  font-size: 10px;
+  text-align: center;
+}
+
+.revise-card-preview,
+.revise-due-page {
+  min-height: 100%;
+  padding: 42px clamp(28px, 6vw, 82px);
+}
+.revise-preview-heading,
+.revise-due-page > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 34px;
+}
+.revise-preview-heading span,
+.revise-due-page header p {
+  color: #88888e;
+  font-size: 10px;
+}
+.revise-preview-heading h1,
+.revise-due-page h1 {
+  max-width: 800px;
+  margin: 8px 0 0;
+  font-size: 25px;
+  line-height: 1.3;
+  letter-spacing: -0.035em;
+}
+.revise-preview-card {
+  display: grid;
+  max-width: 920px;
+  margin-top: 34px;
+  overflow: hidden;
+  border: 1px solid #39393e;
+  border-radius: 13px;
+  background: #242428;
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.22);
+}
+.revise-preview-card section {
+  min-height: 160px;
+  padding: 28px 32px;
+}
+.revise-preview-card section + section {
+  border-top: 1px dashed #414147;
+}
+.revise-preview-card label {
+  color: #77777d;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.revise-preview-card p {
+  margin: 20px 0 0;
+  color: #ececef;
+  font-size: 19px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+.revise-schedule-metadata {
+  display: flex;
+  max-width: 920px;
+  flex-wrap: wrap;
+  gap: 1px;
+  margin-top: 14px;
+  overflow: hidden;
+  border: 1px solid #333337;
+  border-radius: 10px;
+  background: #333337;
+}
+.revise-schedule-metadata div {
+  min-width: 140px;
+  flex: 1;
+  padding: 13px 15px;
+  background: #222225;
+}
+.revise-schedule-metadata dt {
+  color: #737379;
+  font-size: 9px;
+}
+.revise-schedule-metadata dd {
+  margin: 5px 0 0;
+  color: #cfcfd3;
+  font-size: 11px;
+}
+.revise-due-page > header {
+  margin-top: 0;
+}
+.revise-due-page header h1 {
+  margin-top: 0;
+}
+.revise-due-page header p {
+  margin-top: 7px;
+}
+.revise-due-list {
+  display: grid;
+  max-width: 900px;
+  gap: 6px;
+  margin-top: 30px;
+}
+.revise-due-list button {
+  display: grid;
+  gap: 5px;
+  border: 1px solid #343438;
+  border-radius: 9px;
+  padding: 13px 15px;
+  background: #222225;
+  color: #e4e4e7;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.revise-due-list button:hover {
+  border-color: rgba(255, 168, 0, 0.45);
+  background: #29271f;
+}
+.revise-due-list small {
+  color: #85858b;
+  font-size: 9px;
+}
+.revise-due-empty {
+  min-height: 50vh;
+}
+.revise-due-empty svg {
+  width: 28px;
+  height: 28px;
+  color: #55c98b;
+}
+
+@media (max-width: 1180px) {
+  .revise-metrics-grid {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  }
+  .revise-filter-group button:nth-child(2),
+  .revise-filter-group button:nth-child(3) {
+    display: none;
+  }
+}
+@media (max-width: 820px) {
+  .revise-workspace {
+    grid-template-columns: 210px minmax(0, 1fr);
+  }
+  .revise-dashboard-toolbar {
+    flex-wrap: wrap;
+  }
+  .revise-dashboard-toolbar select:nth-last-of-type(1) {
+    margin-left: 0;
+  }
+  .revise-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
