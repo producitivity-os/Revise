@@ -8,7 +8,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { CalendarDays, RefreshCw } from "lucide-react";
+import { CalendarDays, RefreshCw } from "@productivity-os/shared-ui/components/sf-symbols";
 import { Button } from "@productivity-os/shared-ui/components/ui/button";
 import {
   ChartContainer,

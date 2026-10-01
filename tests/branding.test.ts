@@ -40,6 +40,21 @@ test("Revise receives the shared tooltip and application context menu provider",
   assert.match(main, /<SharedUiProvider>/);
 });
 
+test("Revise keeps dashboard surfaces in sync with the light system theme", () => {
+  const styles = readFileSync(
+    new URL("../src/App.css", import.meta.url),
+    "utf8",
+  );
+  assert.match(
+    styles,
+    /\.light \.revise-workspace-content \{[\s\S]*background: #f5f5f4 !important;/,
+  );
+  assert.match(
+    styles,
+    /\.light \.revise-metric-card,[\s\S]*background: #ffffff !important;/,
+  );
+});
+
 test("Revise routes standalone and compact session windows to separate feature shells", () => {
   const app = readFileSync(new URL("../src/App.tsx", import.meta.url), "utf8");
   const dashboard = readFileSync(
@@ -64,7 +79,7 @@ test("Revise routes standalone and compact session windows to separate feature s
   assert.match(app, /<StandaloneWorkspace/);
   assert.match(dashboard, /ChartContainer/);
   assert.match(dashboard, /from "recharts"/);
-  assert.match(library, /assets\/logo\/logo\.png/);
+  assert.doesNotMatch(library, /assets\/logo\/logo\.png/);
   assert.match(native, /inner_size\(860\.0, 680\.0\)/);
   assert.match(native, /AppActivity::ReviseNotebookReview/);
   assert.match(native, /revise:start-session/);

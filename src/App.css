@@ -1,7 +1,6 @@
 :root {
   --shared-ui-accent: #ffa800;
   --shared-ui-accent-foreground: #17130a;
-  color-scheme: dark;
   background: var(--background);
   font-size: 14px;
 }
@@ -133,8 +132,10 @@ body,
   background: var(--card);
   box-shadow: 0 22px 60px rgba(0, 0, 0, 0.3);
 }
-.revise-study-question,
-.revise-study-answer {
+.revise-study-tiers {
+  display: grid;
+}
+.revise-study-tier {
   display: grid;
   min-height: 230px;
   place-items: center;
@@ -146,11 +147,26 @@ body,
   text-align: center;
   white-space: pre-wrap;
 }
-.revise-study-answer {
+.revise-study-tier + .revise-study-tier {
   border-top: 1px dashed rgba(255, 255, 255, 0.12);
   color: #e4e4e7;
   font-size: clamp(17px, 1.7vw, 25px);
   font-weight: 450;
+}
+.revise-study-tier > span {
+  align-self: start;
+  justify-self: start;
+  color: var(--muted-foreground);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.revise-study-tier > img {
+  display: block;
+  width: 100%;
+  max-height: min(440px, 48vh);
+  object-fit: contain;
 }
 .revise-study-source {
   width: 100%;
@@ -680,6 +696,13 @@ body,
   line-height: 1.55;
   white-space: pre-wrap;
 }
+.revise-preview-card img {
+  display: block;
+  max-width: 100%;
+  max-height: 520px;
+  margin: 20px auto 0;
+  object-fit: contain;
+}
 .revise-schedule-metadata {
   display: flex;
   max-width: 920px;
@@ -748,6 +771,94 @@ body,
   width: 28px;
   height: 28px;
   color: #55c98b;
+}
+
+.light .revise-workspace,
+.light .revise-workspace-content {
+  background: #f5f5f4 !important;
+  color: #202124 !important;
+}
+.light .revise-session-progress {
+  background: #dededb;
+}
+.light .revise-study-tier {
+  color: #242427;
+}
+.light .revise-study-tier + .revise-study-tier {
+  border-top-color: rgba(32, 33, 36, 0.14);
+  color: #45454a;
+}
+.light .revise-status > span {
+  background: #fbe4e4;
+  color: #b53b3b;
+}
+.light .revise-status.caught-up > span,
+.light .revise-session-complete > span {
+  background: #dff3e7;
+  color: #24784b;
+}
+.light .revise-inline-error {
+  border-color: rgba(184, 116, 0, 0.28);
+  background: #fff3d8;
+  color: #78520b;
+  box-shadow: 0 10px 30px rgba(49, 39, 18, 0.12);
+}
+.light .revise-inline-error button {
+  color: #5f4007;
+}
+.light .revise-dashboard-toolbar {
+  border-bottom-color: #d9d9d6;
+}
+.light .revise-dashboard-toolbar select,
+.light .revise-date-range input {
+  border-color: #d1d1ce;
+  background: #ffffff;
+  color: #343438;
+}
+.light .revise-date-range,
+.light .revise-section-heading p,
+.light .revise-preview-heading span,
+.light .revise-due-page header p,
+.light .revise-chart-empty,
+.light .revise-empty {
+  color: #717176;
+}
+.light .revise-activity-grid span {
+  border-color: #dededb;
+  background: color-mix(in srgb, #e49a00 calc(var(--activity) * 100%), #e9e9e6);
+}
+.light .revise-metric-card,
+.light .revise-preview-card,
+.light .revise-schedule-metadata div,
+.light .revise-due-list button {
+  border-color: #d9d9d6 !important;
+  background: #ffffff !important;
+}
+.light .revise-metric-card h2,
+.light .revise-schedule-metadata dt,
+.light .revise-due-list small,
+.light .revise-preview-card label {
+  color: #717176;
+}
+.light .revise-metric-card > strong,
+.light .revise-preview-card p,
+.light .revise-schedule-metadata dd,
+.light .revise-due-list button {
+  color: #29292d;
+}
+.light .revise-preview-card {
+  box-shadow: 0 18px 55px rgba(44, 39, 29, 0.1);
+}
+.light .revise-preview-card section + section {
+  border-top-color: #d4d4d0;
+}
+.light .revise-schedule-metadata {
+  border-color: #d7d7d4;
+  background: #d7d7d4;
+}
+.light .revise-due-list button:hover {
+  border-color: rgba(201, 133, 0, 0.48);
+  background: #fff8e8;
 }
 
 @media (max-width: 1180px) {

@@ -468,7 +468,26 @@ pub fn run() {
             }),
             pending_standalone_session_id: Mutex::new(None),
         })
+        .manage(desktop_menu::NativeMenuState::default())
+        .menu(|app| desktop_menu::standard_app_menu(app, "Revise"))
+        .on_menu_event(|app, event| {
+            if event.id().as_ref() == "app:settings" {
+                if let Err(error) = desktop_menu::show_preferences(app, "Revise") {
+                    eprintln!("could not open Revise Settings: {error}");
+                }
+                return;
+            }
+            desktop_menu::handle_menu_event(app, &event);
+        })
+        .on_window_event(|window, event| {
+            if matches!(event, tauri::WindowEvent::Destroyed) {
+                desktop_menu::cleanup_window(window.app_handle(), window.label());
+            }
+        })
         .setup(move |app| {
+            if let Err(error) = desktop_menu::apply_settings_cog_symbol() {
+                eprintln!("could not install the Revise Settings menu icon: {error}");
+            }
             let handle = app.handle().clone();
             let mut handled = legacy_activity
                 .clone()
@@ -506,7 +525,8 @@ pub fn run() {
             initialize_revision_session,
             set_revision_session_status,
             save_revision_session,
-            open_notes_source
+            open_notes_source,
+            desktop_menu::commands::popup_native_context_menu,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Revise");

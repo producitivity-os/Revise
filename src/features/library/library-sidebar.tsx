@@ -6,13 +6,17 @@ import {
   ChevronRight,
   Layers3,
   Play,
-  Search,
-} from "lucide-react";
+} from "@productivity-os/shared-ui/components/sf-symbols";
 import { Button } from "@productivity-os/shared-ui/components/ui/button";
+import {
+  ApplicationSidebar,
+  ApplicationSidebarItem,
+  ApplicationSidebarNav,
+  ApplicationSidebarSection,
+} from "@productivity-os/shared-ui/components/application-sidebar";
 import type { RevisionDeckSummary } from "@/api/revision-data";
-import { clozePrompt } from "@/lib/cloze";
+import { revisionPrompt } from "@/lib/card-tiers";
 import type { RevisionCard } from "@/models/revision";
-import logo from "@/assets/logo/logo.png";
 
 export type WorkspaceView =
   | { type: "dashboard" }
@@ -21,7 +25,7 @@ export type WorkspaceView =
 
 function prompt(card: RevisionCard) {
   return (
-    (card.kind === "cloze" ? clozePrompt(card.cloze) : card.front).trim() ||
+    revisionPrompt(card).trim() ||
     "Untitled card"
   );
 }
@@ -62,53 +66,43 @@ export function LibrarySidebar({
     });
 
   return (
-    <aside className="revise-library-sidebar">
-      <div className="revise-brand">
-        <img src={logo} alt="Revise" />
-        <div>
-          <strong>Revise</strong>
-          <span>Study workspace</span>
-        </div>
-      </div>
-      <label className="revise-search">
-        <Search />
-        <input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search notebooks and cards"
-        />
-      </label>
-      <nav className="revise-primary-nav">
-        <button
-          type="button"
-          data-active={view.type === "dashboard"}
+    <ApplicationSidebar
+      search={{
+        value: query,
+        onChange: setQuery,
+        placeholder: "Search notebooks and cards",
+      }}
+    >
+      <ApplicationSidebarNav>
+        <ApplicationSidebarItem
+          active={view.type === "dashboard"}
+          icon={<BarChart3 />}
+          label="Dashboard"
           onClick={() => onView({ type: "dashboard" })}
-        >
-          <BarChart3 />
-          Dashboard
-        </button>
-        <button
-          type="button"
-          data-active={view.type === "due"}
+        />
+        <ApplicationSidebarItem
+          active={view.type === "due"}
+          icon={<Layers3 />}
+          label="Due Cards"
+          badge={dueCount}
           onClick={() => onView({ type: "due" })}
-        >
-          <Layers3 />
-          Due Cards <span>{dueCount}</span>
-        </button>
-      </nav>
-      <div className="revise-library-heading">
-        <span>Notebooks</span>
-        <Button
-          type="button"
-          size="icon-xs"
-          variant="ghost"
-          title="Review all due cards"
-          onClick={() => onStartReview()}
-        >
-          <Play />
-        </Button>
-      </div>
-      <div className="revise-deck-list">
+        />
+      </ApplicationSidebarNav>
+      <ApplicationSidebarSection
+        label="Notebooks"
+        action={
+          <Button
+            type="button"
+            size="icon-xs"
+            variant="ghost"
+            title="Review all due cards"
+            onClick={() => onStartReview()}
+          >
+            <Play />
+          </Button>
+        }
+      >
+        <div className="revise-deck-list">
         {matchingDecks.map((deck) => {
           const isExpanded =
             expanded.has(deck.notebookId) || normalized.length > 0;
@@ -171,7 +165,8 @@ export function LibrarySidebar({
             No notebooks match your search.
           </p>
         )}
-      </div>
-    </aside>
+        </div>
+      </ApplicationSidebarSection>
+    </ApplicationSidebar>
   );
 }

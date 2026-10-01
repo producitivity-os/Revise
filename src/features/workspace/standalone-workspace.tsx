@@ -1,6 +1,10 @@
 import * as React from "react";
-import { AlertCircle, CheckCircle2, Play, RefreshCw } from "lucide-react";
+import { AlertCircle, CheckCircle2, Play, RefreshCw } from "@productivity-os/shared-ui/components/sf-symbols";
 import { Button } from "@productivity-os/shared-ui/components/ui/button";
+import {
+  ApplicationSidebarContent,
+  ApplicationSidebarLayout,
+} from "@productivity-os/shared-ui/components/application-sidebar";
 import { revisionData, type RevisionDeckSummary } from "@/api/revision-data";
 import { Dashboard } from "@/features/dashboard/dashboard";
 import { CardPreview } from "@/features/library/card-preview";
@@ -10,6 +14,7 @@ import {
 } from "@/features/library/library-sidebar";
 import { ReviewWindow } from "@/features/review/review-window";
 import type { RevisionCard } from "@/models/revision";
+import { revisionPrompt } from "@/lib/card-tiers";
 
 type WorkspaceState = { decks: RevisionDeckSummary[]; cards: RevisionCard[] };
 
@@ -115,7 +120,7 @@ export function StandaloneWorkspace() {
 
   const dueCards = state.cards.filter((card) => card.dueAt <= Date.now());
   return (
-    <div className="revise-workspace">
+    <ApplicationSidebarLayout accentColor="#ffa800" className="revise-workspace">
       <LibrarySidebar
         decks={state.decks}
         cards={state.cards}
@@ -123,7 +128,7 @@ export function StandaloneWorkspace() {
         onView={setView}
         onStartReview={(id) => void startReview(id)}
       />
-      <div className="revise-workspace-content">
+      <ApplicationSidebarContent className="revise-workspace-content">
         {error && (
           <div className="revise-inline-error">
             <AlertCircle />
@@ -153,8 +158,8 @@ export function StandaloneWorkspace() {
             onEdit={() => void revisionData.openSource(view.card)}
           />
         )}
-      </div>
-    </div>
+      </ApplicationSidebarContent>
+    </ApplicationSidebarLayout>
   );
 }
 
@@ -197,7 +202,7 @@ function DueCards({
               key={`${card.notebookId}-${card.cardId}`}
               onClick={() => onSelect(card)}
             >
-              <span>{card.front || card.cloze || "Untitled question"}</span>
+              <span>{revisionPrompt(card) || "Untitled card"}</span>
               <small>{card.notebookTitle}</small>
             </button>
           ))}

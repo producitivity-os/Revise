@@ -7,11 +7,16 @@ import {
   RotateCcw,
   Sparkles,
   X,
-} from "lucide-react";
+} from "@productivity-os/shared-ui/components/sf-symbols";
 import { Button } from "@productivity-os/shared-ui/components/ui/button";
 import { Kbd } from "@productivity-os/shared-ui/components/ui/kbd";
 import type { RevisionCard, RevisionRating } from "@/models/revision";
-import { clozeAnswer, clozePrompt } from "@/lib/cloze";
+import {
+  nextVisibleTierCount,
+  revisionCardTiers,
+  revisionExpectedAnswer,
+  revisionPrompt,
+} from "@/lib/card-tiers";
 
 const ratings: {
   id: RevisionRating;
@@ -51,18 +56,18 @@ export function ReviewSession({
   onExit(): void;
   onOpenSource(card: RevisionCard): void;
 }) {
-  const [revealed, setRevealed] = React.useState(false);
+  const [visibleTierCount, setVisibleTierCount] = React.useState(1);
   const card = cards[0];
+  const tiers = card ? revisionCardTiers(card) : [];
+  const fullyRevealed = visibleTierCount >= tiers.length;
   React.useEffect(() => {
-    setRevealed(false);
+    setVisibleTierCount(1);
   }, [card?.cardId]);
   const rate = React.useCallback(
     async (rating: RevisionRating) => {
       if (!card || status === "paused") return;
-      const question =
-        card.kind === "cloze" ? clozePrompt(card.cloze) : card.front;
-      const expectedAnswer =
-        card.kind === "cloze" ? clozeAnswer(card.cloze) : card.back;
+      const question = revisionPrompt(card);
+      const expectedAnswer = revisionExpectedAnswer(card);
       await onRate(card, rating, question, expectedAnswer);
     },
     [card, onRate, status],
@@ -71,12 +76,14 @@ export function ReviewSession({
     const keydown = (event: KeyboardEvent) => {
       if (!card || busy || status === "paused" || status === "completed")
         return;
-      if (!revealed && (event.key === " " || event.key === "ArrowDown")) {
+      if (!fullyRevealed && (event.key === " " || event.key === "ArrowDown")) {
         event.preventDefault();
-        setRevealed(true);
+        setVisibleTierCount((count) =>
+          nextVisibleTierCount(count, tiers.length),
+        );
         return;
       }
-      if (revealed) {
+      if (fullyRevealed) {
         const rating = ratings.find((item) => item.key === event.key)?.id;
         if (rating) {
           event.preventDefault();
@@ -86,7 +93,7 @@ export function ReviewSession({
     };
     window.addEventListener("keydown", keydown);
     return () => window.removeEventListener("keydown", keydown);
-  }, [busy, card, rate, revealed, status]);
+  }, [busy, card, fullyRevealed, rate, status, tiers.length]);
 
   if (!card || status === "completed")
     return (
@@ -99,8 +106,6 @@ export function ReviewSession({
         </Button>
       </div>
     );
-  const prompt = card.kind === "cloze" ? clozePrompt(card.cloze) : card.front;
-  const answer = card.kind === "cloze" ? clozeAnswer(card.cloze) : card.back;
   const progress =
     totalCards <= 0 ? 1 : Math.min(1, reviewedCount / totalCards);
   return (
@@ -136,13 +141,19 @@ export function ReviewSession({
           </Button>
         </div>
       )}
-      <article className={`revise-study-card${revealed ? " revealed" : ""}`}>
-        <div className="revise-study-question">
-          {prompt || "Untitled question"}
+      <article className={`revise-study-card${fullyRevealed ? " revealed" : ""}`}>
+        <div className="revise-study-tiers">
+          {tiers.slice(0, visibleTierCount).map((tier, index) => (
+            <section className="revise-study-tier" key={tier.id}>
+              <span>{tier.name}</span>
+              {tier.previewDataUrl ? (
+                <img src={tier.previewDataUrl} alt={`${tier.name} preview`} />
+              ) : (
+                <div>{tier.content || (index === 0 ? "Untitled card" : "Empty tier")}</div>
+              )}
+            </section>
+          ))}
         </div>
-        {revealed && (
-          <div className="revise-study-answer">{answer || "No answer yet"}</div>
-        )}
         <Button
           type="button"
           variant="ghost"
@@ -154,15 +165,19 @@ export function ReviewSession({
           {card.sources[0] ? ` · ${card.sources[0].label}` : ""}
         </Button>
       </article>
-      {!revealed ? (
+      {!fullyRevealed ? (
         <Button
           type="button"
           variant="secondary"
           size="sm"
           className="revise-reveal"
-          onClick={() => setRevealed(true)}
+          onClick={() =>
+            setVisibleTierCount((count) =>
+              nextVisibleTierCount(count, tiers.length),
+            )
+          }
         >
-          Press <Kbd>Space</Kbd> or <Kbd>↓</Kbd> to reveal the answer
+          Press <Kbd>Space</Kbd> or <Kbd>↓</Kbd> to reveal the next tier
         </Button>
       ) : (
         <div className="revise-ratings">

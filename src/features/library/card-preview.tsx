@@ -1,6 +1,6 @@
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "@productivity-os/shared-ui/components/sf-symbols";
 import { Button } from "@productivity-os/shared-ui/components/ui/button";
-import { clozeAnswer, clozePrompt } from "@/lib/cloze";
+import { revisionCardTiers, revisionPrompt } from "@/lib/card-tiers";
 import type { RevisionCard } from "@/models/revision";
 
 function dateTime(value: number | null) {
@@ -21,8 +21,8 @@ export function CardPreview({
   onBack(): void;
   onEdit(): void;
 }) {
-  const question = card.kind === "cloze" ? clozePrompt(card.cloze) : card.front;
-  const answer = card.kind === "cloze" ? clozeAnswer(card.cloze) : card.back;
+  const tiers = revisionCardTiers(card);
+  const question = revisionPrompt(card);
   return (
     <main className="revise-card-preview">
       <Button type="button" size="sm" variant="ghost" onClick={onBack}>
@@ -42,14 +42,16 @@ export function CardPreview({
         </Button>
       </div>
       <article className="revise-preview-card">
-        <section>
-          <label>Question</label>
-          <p>{question || "Untitled question"}</p>
-        </section>
-        <section>
-          <label>Expected answer</label>
-          <p>{answer || "No answer yet"}</p>
-        </section>
+        {tiers.map((tier) => (
+          <section key={tier.id}>
+            <label>{tier.name}</label>
+            {tier.previewDataUrl ? (
+              <img src={tier.previewDataUrl} alt={`${tier.name} preview`} />
+            ) : (
+              <p>{tier.content || "Empty tier"}</p>
+            )}
+          </section>
+        ))}
       </article>
       <dl className="revise-schedule-metadata">
         <div>
@@ -70,7 +72,7 @@ export function CardPreview({
         </div>
         <div>
           <dt>Card type</dt>
-          <dd>{card.kind === "cloze" ? "Cloze" : "Basic"}</dd>
+          <dd>{tiers.length} {tiers.length === 1 ? "tier" : "tiers"}</dd>
         </div>
       </dl>
     </main>

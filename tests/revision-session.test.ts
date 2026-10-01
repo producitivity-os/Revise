@@ -8,6 +8,12 @@ import {
   tickRevisionSession,
   toggleRevisionSessionPause,
 } from "../src/lib/revision-session.ts";
+import {
+  nextVisibleTierCount,
+  revisionCardTiers,
+  revisionExpectedAnswer,
+} from "../src/lib/card-tiers.ts";
+import type { RevisionCard } from "../src/models/revision.ts";
 
 function session(overrides: Partial<RevisionSession> = {}): RevisionSession {
   return {
@@ -85,4 +91,39 @@ test("card goals use the smaller requested or available card count", () => {
     ),
     20,
   );
+});
+
+test("tiered cards reveal sequentially and front-only cards rate immediately", () => {
+  const card = {
+    notebookId: "notes",
+    notebookTitle: "Notes",
+    layerId: "main",
+    layerName: "Main",
+    cardId: "tiered",
+    kind: "basic",
+    front: "legacy front",
+    back: "legacy back",
+    cloze: "",
+    tiers: [
+      { id: "front", name: "Front", content: "Prompt", previewDataUrl: null },
+      { id: "hint", name: "Hint", content: "A hint", previewDataUrl: null },
+      { id: "back", name: "Back", content: "Answer", previewDataUrl: null },
+    ],
+    sources: [],
+    dueAt: 0,
+    lastReviewAt: null,
+    reviewCount: 0,
+    lapses: 0,
+  } satisfies RevisionCard;
+
+  assert.deepEqual(revisionCardTiers(card).map((tier) => tier.name), [
+    "Front",
+    "Hint",
+    "Back",
+  ]);
+  assert.equal(nextVisibleTierCount(1, 3), 2);
+  assert.equal(nextVisibleTierCount(2, 3), 3);
+  assert.equal(nextVisibleTierCount(3, 3), 3);
+  assert.equal(revisionExpectedAnswer(card), "A hint\n\nAnswer");
+  assert.equal(nextVisibleTierCount(1, 1), 1);
 });
